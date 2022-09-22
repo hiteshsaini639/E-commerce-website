@@ -7,21 +7,46 @@ const notification = document.getElementById("notification");
 const cartItems = document.getElementById("cart-items");
 const cart = document.getElementById("cart");
 const cartBtn = document.querySelector(".cart-btn");
+const pagination = document.getElementById("pagination");
+const previous = document.getElementById("previous");
+const current = document.getElementById("current");
+const next = document.getElementById("next");
+const cartPagination = document.getElementById("cart-pagination");
+const cartPrevious = document.getElementById("cart-previous");
+const cartCurrent = document.getElementById("cart-current");
+const cartNext = document.getElementById("cart-next");
+
+pagination.addEventListener("click", (e) => {
+  if (e.target.matches("button")) {
+    const page = +e.target.innerText;
+    getDataLoad(page);
+  }
+});
+
+cartPagination.addEventListener("click", (e) => {
+  if (e.target.matches("button")) {
+    const page = +e.target.innerText;
+    getCartData(page);
+  }
+});
 
 cartBtn.addEventListener("click", () => {
   cart.classList.toggle("active-cart");
   if (cart.classList.contains("active-cart")) {
-    cartItems.innerHTML = "";
-    getCartData();
+    getCartData(1);
   }
 });
 
-async function getCartData() {
+async function getCartData(page) {
   try {
-    const cartItems = await axios.get("http://localhost:3000/get-cartItems");
-    cartItems.data.forEach((cartItem) => {
+    const { data } = await axios.get(
+      `http://localhost:3000/get-cartItems?page=${page}`
+    );
+    cartItems.innerHTML = "";
+    data.cartItems.forEach((cartItem) => {
       addToCart(cartItem);
     });
+    showCartPage(page, data.hasNextPage);
   } catch (err) {
     console.log(err);
   }
@@ -36,16 +61,51 @@ function fixNav() {
   }
 }
 
-window.addEventListener("DOMContentLoaded", getDataLoad);
+window.addEventListener("DOMContentLoaded", getDataLoad(1));
 
-async function getDataLoad() {
+async function getDataLoad(page) {
   try {
-    const products = await axios.get("http://localhost:3000/get-products");
-    products.data.forEach((product) => {
+    const { data } = await axios.get(
+      `http://localhost:3000/get-products?page=${page}`
+    );
+    cardContainer.innerHTML = "";
+    data.products.forEach((product) => {
       showProduct(product);
     });
+    showPage(page, data.hasNextPage);
   } catch (err) {
     console.log(err);
+  }
+}
+
+function showPage(page, hasNextPage) {
+  current.innerText = page;
+  previous.innerText = page - 1;
+  next.innerText = page + 1;
+  if (page == 1) {
+    previous.style.visibility = "hidden";
+  } else {
+    previous.style.visibility = "visible";
+  }
+  if (!hasNextPage) {
+    next.style.visibility = "hidden";
+  } else {
+    next.style.visibility = "visible";
+  }
+}
+function showCartPage(page, hasNextPage) {
+  cartCurrent.innerText = page;
+  cartPrevious.innerText = page - 1;
+  cartNext.innerText = page + 1;
+  if (page == 1) {
+    cartPrevious.style.visibility = "hidden";
+  } else {
+    cartPrevious.style.visibility = "visible";
+  }
+  if (!hasNextPage) {
+    cartNext.style.visibility = "hidden";
+  } else {
+    cartNext.style.visibility = "visible";
   }
 }
 

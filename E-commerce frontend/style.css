@@ -414,3 +414,45 @@ h1 {
 #cart.active-cart {
   right: 0;
 }
+
+#pagination button {
+  width: 35px;
+  height: 35px;
+  font-size: 1.5rem;
+  border-radius: 50%;
+  margin: 0 10px;
+  cursor: pointer;
+  border: none;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 1);
+}
+
+#pagination {
+  margin: 20px 0;
+  text-align: center;
+}
+
+#pagination #current {
+  width: 45px;
+  height: 45px;
+}
+
+#cart-pagination button {
+  width: 25px;
+  height: 25px;
+  font-size: 1rem;
+  border-radius: 50%;
+  margin: 0 10px;
+  cursor: pointer;
+  border: none;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 1);
+}
+
+#cart-pagination {
+  margin: 20px 0;
+  text-align: center;
+}
+
+#cart-pagination #cart-current {
+  width: 35px;
+  height: 35px;
+}
