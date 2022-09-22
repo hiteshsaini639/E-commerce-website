@@ -10,7 +10,22 @@ const cartBtn = document.querySelector(".cart-btn");
 
 cartBtn.addEventListener("click", () => {
   cart.classList.toggle("active-cart");
+  if (cart.classList.contains("active-cart")) {
+    cartItems.innerHTML = "";
+    getCartData();
+  }
 });
+
+async function getCartData() {
+  try {
+    const cartItems = await axios.get("http://localhost:3000/get-cartItems");
+    cartItems.data.forEach((cartItem) => {
+      addToCart(cartItem);
+    });
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 window.addEventListener("scroll", fixNav);
 function fixNav() {
@@ -55,12 +70,26 @@ function showProduct(product) {
 
 cardContainer.addEventListener("click", (e) => {
   if (e.target.matches("button")) {
-    const imgElement =
-      e.target.parentElement.previousElementSibling.firstElementChild;
-    createNotification(imgElement.alt);
-    addToCart(imgElement);
+    const productId =
+      e.target.parentElement.previousElementSibling.firstElementChild.id;
+    addToDBcart(productId);
+    // createNotification(imgElement.alt);
+    // addToCart(imgElement);
   }
 });
+
+async function addToDBcart(productId) {
+  try {
+    const product = await axios.post(`http://localhost:3000/add-to-cart`, {
+      productId: productId,
+    });
+    console.log(product.data);
+    createNotification(product.data.description);
+    addToCart(product.data);
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 cardContainer.addEventListener("dblclick", (e) => {
   if (e.target.matches("img")) {
@@ -89,15 +118,14 @@ function createNotification(notificationMsg) {
 function addToCart(item) {
   const newItem = `<div class="cart-row">
   <span class="cart-item cart-column">
-    <img class="cart-img" src="${item.src}" alt="" />
-    <span>${item.alt}</span>
+    <img class="cart-img" src="${item.image}" alt="" />
+    <span>${item.description}</span>
   </span>
-  <span class="cart-price cart-column">${item.dataset.price}</span>
+  <span class="cart-price cart-column">${item.price}</span>
   <span class="cart-quantity cart-column">
     <input type="number" value="1" />
     <button>REMOVE</button>
   </span>
 </div>`;
-  console.log(cartItems);
   cartItems.innerHTML += newItem;
 }
