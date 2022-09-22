@@ -1,7 +1,7 @@
 const nav = document.querySelector(".nav");
 const close = document.getElementById("close");
 const popupImage = document.getElementById("popup-image");
-const cardContainer = document.querySelector(".card-container");
+const cardContainer = document.getElementById("card-container");
 const popupContainer = document.getElementById("popup-container");
 const notification = document.getElementById("notification");
 const cartItems = document.getElementById("cart-items");
@@ -19,6 +19,38 @@ function fixNav() {
   } else {
     nav.classList.remove("active");
   }
+}
+
+window.addEventListener("DOMContentLoaded", getDataLoad);
+
+async function getDataLoad() {
+  try {
+    const products = await axios.get("http://localhost:3000/get-products");
+    products.data.forEach((product) => {
+      showProduct(product);
+    });
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+function showProduct(product) {
+  const newProduct = `<div class="card">
+  <div class="card-header">
+    <img
+    id="${product.id}"
+      src="${product.image}"
+      alt="${product.description}"
+      data-price="${product.price}"
+    />
+  </div>
+  <div class="card-content">
+    <h3 class="card-title">${product.description}</h3>
+    <i class="fa fa-indian-rupee-sign">${product.price}</i>
+    <button type="submit">ADD TO CART</button>
+  </div>
+</div>`;
+  cardContainer.innerHTML += newProduct;
 }
 
 cardContainer.addEventListener("click", (e) => {
