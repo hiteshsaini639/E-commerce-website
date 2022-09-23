@@ -1,7 +1,5 @@
 const { JSON } = require("sequelize");
 const Product = require("../models/product");
-const Cart = require("../models/cart");
-const CartItem = require("../models/cart-item");
 
 exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
@@ -12,7 +10,7 @@ exports.postCart = (req, res, next) => {
       return cart.addProduct(prodId);
     })
     .then(() => {
-      res.json({ message: "added successfully" });
+      res.send(product);
     })
     .catch((err) => console.log(err));
 };

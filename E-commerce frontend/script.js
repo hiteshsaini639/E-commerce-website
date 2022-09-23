@@ -16,6 +16,8 @@ const cartPrevious = document.getElementById("cart-previous");
 const cartCurrent = document.getElementById("cart-current");
 const cartNext = document.getElementById("cart-next");
 
+let qtyObj;
+
 pagination.addEventListener("click", (e) => {
   if (e.target.matches("button")) {
     const page = +e.target.innerText;
@@ -46,6 +48,7 @@ async function getCartData(page) {
     data.cartItems.forEach((cartItem) => {
       addToCart(cartItem);
     });
+    qtyObj = JSON.parse(localStorage.getItem("quantityObject"));
     showCartPage(page, data.hasNextPage);
   } catch (err) {
     console.log(err);
@@ -71,6 +74,8 @@ async function getDataLoad(page) {
     cardContainer.innerHTML = "";
     data.products.forEach((product) => {
       showProduct(product);
+      qtyObj = JSON.parse(localStorage.getItem("quantityObject"));
+      qtyObj = qtyObj == null ? {} : qtyObj;
     });
     showPage(page, data.hasNextPage);
   } catch (err) {
@@ -113,7 +118,6 @@ function showProduct(product) {
   const newProduct = `<div class="card">
   <div class="card-header">
     <img
-    id="${product.id}"
       src="${product.image}"
       alt="${product.description}"
       data-price="${product.price}"
@@ -122,7 +126,7 @@ function showProduct(product) {
   <div class="card-content">
     <h3 class="card-title">${product.description}</h3>
     <i class="fa fa-indian-rupee-sign">${product.price}</i>
-    <button type="submit">ADD TO CART</button>
+    <button id="${product.id}" type="submit">ADD TO CART</button>
   </div>
 </div>`;
   cardContainer.innerHTML += newProduct;
@@ -130,22 +134,20 @@ function showProduct(product) {
 
 cardContainer.addEventListener("click", (e) => {
   if (e.target.matches("button")) {
-    const productId =
-      e.target.parentElement.previousElementSibling.firstElementChild.id;
+    const productId = e.target.id;
+    qtyObj[productId] = 1;
+    localStorage.setItem("quantityObject", JSON.stringify(qtyObj));
     addToDBcart(productId);
-    // createNotification(imgElement.alt);
-    // addToCart(imgElement);
   }
 });
 
 async function addToDBcart(productId) {
   try {
-    const product = await axios.post(`http://localhost:3000/add-to-cart`, {
+    await axios.post(`http://localhost:3000/add-to-cart`, {
       productId: productId,
     });
-    console.log(product.data);
-    createNotification(product.data.description);
-    addToCart(product.data);
+    // createNotification(product.description);
+    // addToCart(product);
   } catch (err) {
     console.log(err);
   }
@@ -178,14 +180,36 @@ function createNotification(notificationMsg) {
 function addToCart(item) {
   const newItem = `<div class="cart-row">
   <span class="cart-item cart-column">
-    <img class="cart-img" src="${item.image}" alt="" />
+    <img class="cart-img" id="${item.id}" src="${item.image}" alt="" />
     <span>${item.description}</span>
   </span>
   <span class="cart-price cart-column">${item.price}</span>
   <span class="cart-quantity cart-column">
-    <input type="number" value="1" />
+    <input id=${item.id} type="number" value="${qtyObj[item.id]}" />
     <button>REMOVE</button>
   </span>
 </div>`;
+
   cartItems.innerHTML += newItem;
+  const qtyInputs = cartItems.querySelectorAll("input");
+  qtyInputs.forEach((input) => {
+    input.addEventListener("input", (e) => {
+      qtyObj[e.target.id] = e.target.value;
+      localStorage.setItem("quantityObject", JSON.stringify(qtyObj));
+    });
+  });
+}
+
+const orderBtn = document.getElementById("order-btn");
+orderBtn.addEventListener("click", () => {
+  addToOrder(qtyObj);
+});
+
+async function addToOrder(obj) {
+  try {
+    const response = await axios.post("http://localhost:3000/place-order", obj);
+    console.log(response);
+  } catch (err) {
+    console.log(err);
+  }
 }
