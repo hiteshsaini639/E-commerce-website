@@ -7,10 +7,11 @@ const Order = require("../models/order");
 const User = require("../models/user");
 
 exports.postOrder = (req, res, next) => {
-  let cartProducts;
+  let cartProducts, fetchedCart;
   req.user
     .getCart()
     .then((cart) => {
+      fetchedCart = cart;
       return cart.getProducts();
     })
     .then((products) => {
@@ -24,6 +25,18 @@ exports.postOrder = (req, res, next) => {
           return product;
         })
       );
+    })
+    .then(() => {
+      return fetchedCart.setProducts(null);
+    })
+    .catch((err) => console.log(err));
+};
+
+exports.getOrders = (req, res, next) => {
+  req.user
+    .getOrders({ include: ["products"] })
+    .then((orders) => {
+      res.send(orders);
     })
     .catch((err) => console.log(err));
 };
