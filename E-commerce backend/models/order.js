@@ -8,6 +8,7 @@ const Order = sequelize.define("orders", {
     allowNull: false,
     autoIncrement: true,
   },
+  total: Sequelize.DOUBLE,
 });
 
 module.exports = Order;

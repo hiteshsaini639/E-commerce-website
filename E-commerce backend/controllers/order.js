@@ -16,7 +16,8 @@ exports.postOrder = (req, res, next) => {
     })
     .then((products) => {
       cartProducts = products;
-      return req.user.createOrder();
+      const totalPrice = products.reduce((prev, curr) => prev + curr.price, 0);
+      return req.user.createOrder({ total: totalPrice });
     })
     .then((order) => {
       return order.addProducts(

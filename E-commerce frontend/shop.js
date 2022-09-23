@@ -14,6 +14,8 @@ const cartPagination = document.getElementById("cart-pagination");
 const cartPrevious = document.getElementById("cart-previous");
 const cartCurrent = document.getElementById("cart-current");
 const cartNext = document.getElementById("cart-next");
+const cartTotal = document.getElementById("total-value");
+const cartNumber = document.getElementById("cart-number");
 
 let qtyObj;
 
@@ -43,10 +45,12 @@ async function getCartData(page) {
     const { data } = await axios.get(
       `http://localhost:3000/get-cartItems?page=${page}`
     );
-    cartItems.innerHTML = "";
+    cartItems.innerText = "";
+    cartNumber.innerText = data.totalCartItems;
     data.cartItems.forEach((cartItem) => {
       addToCart(cartItem);
     });
+    cartTotal.innerText = data.total;
     qtyObj = JSON.parse(localStorage.getItem("quantityObject"));
     showCartPage(page, data.hasNextPage);
   } catch (err) {
@@ -62,11 +66,12 @@ async function getDataLoad(page) {
       `http://localhost:3000/get-products?page=${page}`
     );
     cardContainer.innerHTML = "";
+    cartNumber.innerText = data.totalCartItems;
     data.products.forEach((product) => {
       showProduct(product);
-      qtyObj = JSON.parse(localStorage.getItem("quantityObject"));
-      qtyObj = qtyObj == null ? {} : qtyObj;
     });
+    qtyObj = JSON.parse(localStorage.getItem("quantityObject"));
+    qtyObj = qtyObj == null ? {} : qtyObj;
     showPage(page, data.hasNextPage);
   } catch (err) {
     console.log(err);
@@ -133,9 +138,7 @@ cardContainer.addEventListener("click", (e) => {
 
 async function addToDBcart(productId) {
   try {
-    await axios.post(`http://localhost:3000/add-to-cart`, {
-      productId: productId,
-    });
+    await axios.post(`http://localhost:3000/add-to-cart/${productId}`);
     // createNotification(product.description);
     // addToCart(product);
   } catch (err) {
@@ -170,13 +173,13 @@ function createNotification(notificationMsg) {
 function addToCart(item) {
   const newItem = `<div class="cart-row">
   <span class="cart-item cart-column">
-    <img class="cart-img" id="${item.id}" src="${item.image}" alt="" />
+    <img class="cart-img" src="${item.image}" alt="" />
     <span>${item.description}</span>
   </span>
   <span class="cart-price cart-column">${item.price}</span>
   <span class="cart-quantity cart-column">
     <input id=${item.id} type="number" value="${qtyObj[item.id]}" />
-    <button>REMOVE</button>
+    <button id=${item.id}>REMOVE</button>
   </span>
 </div>`;
 
@@ -187,7 +190,23 @@ function addToCart(item) {
       qtyObj[e.target.id] = e.target.value;
       localStorage.setItem("quantityObject", JSON.stringify(qtyObj));
     });
+
+    cartItems.addEventListener("click", (e) => {
+      if (e.target.matches("button")) {
+        deleteItemFromCart(e.target.id);
+        delete qtyObj[e.target.id];
+        localStorage.setItem("quantityObject", JSON.stringify(qtyObj));
+      }
+    });
   });
+}
+
+async function deleteItemFromCart(itemId) {
+  try {
+    await axios.delete(`http://localhost:3000/delete-item/${itemId}`);
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 const orderBtn = document.getElementById("order-btn");

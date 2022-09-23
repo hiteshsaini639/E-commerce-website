@@ -5,7 +5,6 @@ window.addEventListener("DOMContentLoaded", getOrders);
 async function getOrders() {
   try {
     const orders = await axios.get("http://localhost:3000/get-orders");
-    console.log(orders);
     ordersEle.innerHTML = "";
     orders.data.forEach((order) => {
       showOrder(order);
@@ -16,7 +15,10 @@ async function getOrders() {
 }
 
 function showOrder(order) {
-  const total = order.products.reduce((prev, curr) => prev + curr.price, 0);
+  const total = order.products.reduce(
+    (prev, curr) => prev + curr.price * curr.orderItems.quantity,
+    0
+  );
   const productsRows = order.products
     .map(function (product) {
       return ` <div class="cart-row">

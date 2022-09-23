@@ -5,8 +5,16 @@ const PRODUCT_PER_PAGE = 4;
 
 exports.getProducts = (req, res, next) => {
   const page = +req.query.page;
-  let productCount;
-  Product.count()
+  let productCount, totalCartItems;
+  req.user
+    .getCart()
+    .then((cart) => {
+      return cart.countProducts();
+    })
+    .then((count) => {
+      totalCartItems = count;
+      return Product.count();
+    })
     .then((count) => {
       productCount = count;
       return Product.findAll({
@@ -16,7 +24,11 @@ exports.getProducts = (req, res, next) => {
     })
     .then((products) => {
       const hasNextPage = page * PRODUCT_PER_PAGE < productCount;
-      res.json({ hasNextPage: hasNextPage, products: products });
+      res.json({
+        hasNextPage: hasNextPage,
+        products: products,
+        totalCartItems: totalCartItems,
+      });
     })
     .catch((err) => console.log(err));
 };
