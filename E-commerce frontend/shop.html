@@ -4,12 +4,17 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>E-Commerce</title>
+    <title>ImageBazar</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
     />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js" integrity="sha512-odNmoc1XJy5x1TMVMdC7EMs3IVdItLPlCeL5vSUPN2llYKMJ2eByTTAIiiuqLg+GdNr9hF6z81p27DArRFKT7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"
+      integrity="sha512-odNmoc1XJy5x1TMVMdC7EMs3IVdItLPlCeL5vSUPN2llYKMJ2eByTTAIiiuqLg+GdNr9hF6z81p27DArRFKT7A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -27,68 +32,48 @@
       </div>
       <button class="cart-btn">Cart<sup id="cart-number">0</sup></button>
     </nav>
-    <div class="container">
+    <!-- products start -->
+    <section class="container">
       <div class="card-container" id="card-container">
-        <!-- <div class="card">
-          <div class="card-header">
-            <img
-              src="https://images.unsplash.com/photo-1426604966848-d7adac402bff?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-              alt="El Capitan on a sunny afternoon"
-              data-price="45"
-            />
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">El Capitan on a sunny afternoon</h3>
-            <i class="fa fa-indian-rupee-sign">45</i>
-            <button type="submit">ADD TO CART</button>
-          </div>
-        </div> -->
-    </div>
-    <!-- cart -->
-    <div class="" id="cart">
+        <!-- products card -->
+      </div>
+    </section>
+    <!-- products end -->
+    <!-- cart start-->
+    <section id="cart">
       <h1>Your Products</h1>
-      <section>
-        <div class="cart-row cart-header">
-          <span class="cart-item cart-column">ITEM</span>
-          <span class="cart-price cart-column">PRICE</span>
-          <span class="cart-quantity cart-column">QUANTITY</span>
-        </div>
-        <div id="cart-items">
-          <!-- <div class="cart-row">
-            <span class="cart-item cart-column">
-              <img class="cart-img" src="${item.src}" alt="" />
-              <span>${item.alt}</span>
-            </span>
-            <span class="cart-price cart-column">${item.dataset.price}</span>
-            <span class="cart-quantity cart-column">
-              <input type="number" value="1" />
-              <button>REMOVE</button>
-            </span>
-          </div> -->
-        </div>
-        <div class="cart-total">
-          <span>
-            <span class="total-title"> <strong>Total</strong></span>
-            $<span id="total-value">0</span>
-          </span>
-        </div>
-        <section id="cart-pagination"> 
-          <button id="cart-previous" value="0">0</button>
-          <button id="cart-current" value="1">1</button>
-          <button id="cart-next" value="2">2</button>
-        </section>
-        <button class="purchase-btn" id="order-btn" type="button">Order Now</button>
-      </section>
-    </div>
-    <!-- cart -->
+      <div class="cart-row cart-header">
+        <span class="cart-item cart-column">ITEM</span>
+        <span class="cart-price cart-column">PRICE</span>
+        <span class="cart-quantity cart-column">QUANTITY</span>
+      </div>
+      <div id="cart-items">
+        <!-- cart items -->
+      </div>
+      <div class="cart-total">
+        <span>
+          <span class="total-title"> <strong>Total</strong></span>
+          <i class="fa fa-indian-rupee-sign"><span id="total-value">0</span></i>
+        </span>
+      </div>
+      <div id="cart-pagination">
+        <button id="cart-previous" value="0">0</button>
+        <button id="cart-current" value="1">1</button>
+        <button id="cart-next" value="2">2</button>
+      </div>
+      <button class="purchase-btn" id="order-btn" type="button">
+        Order Now
+      </button>
+    </section>
+    <!-- cart end-->
     <div class="popup-container" id="popup-container">
       <div id="popup">
-        <button id="close">&times;</button>
+        <button id="close-btn">&times;</button>
         <img id="popup-image" src="" alt="" />
       </div>
     </div>
     <div id="notification"></div>
-    <section id="pagination"> 
+    <section id="pagination">
       <button id="previous" value="0">0</button>
       <button id="current" value="1">1</button>
       <button id="next" value="2">2</button>

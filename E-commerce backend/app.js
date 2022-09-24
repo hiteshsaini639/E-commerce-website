@@ -30,6 +30,10 @@ app.use(productRoutes);
 app.use(shopRoutes);
 app.use(orderRoutes);
 
+app.use("/", (req, res, next) => {
+  res.status(404).json({ success: false, message: "Oops...Page Not Found" });
+});
+
 User.hasOne(Cart);
 Cart.belongsTo(User);
 Cart.belongsToMany(Product, { through: CartItem });

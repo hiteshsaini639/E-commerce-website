@@ -374,6 +374,7 @@ h1 {
 
 .show {
   background-color: rebeccapurple;
+  color: #fff;
   padding: 1rem;
   margin: 1rem;
   border-radius: 5px;

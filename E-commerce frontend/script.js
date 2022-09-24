@@ -1,4 +1,6 @@
 const nav = document.querySelector(".nav");
+
+//nav scroll animation (intsectionObserver can be used)
 window.addEventListener("scroll", fixNav);
 function fixNav() {
   if (window.scrollY > nav.offsetHeight + 150) {

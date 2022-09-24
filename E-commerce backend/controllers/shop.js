@@ -1,8 +1,14 @@
 const { JSON } = require("sequelize");
 const Product = require("../models/product");
 
-exports.deleteCartItem = (req, res, next) => {
+exports.removeCartItem = (req, res, next) => {
   const itemId = req.params.itemId;
+  let productDes;
+  if (!itemId) {
+    return res
+      .status(400)
+      .send({ success: false, message: "Invalid URL (Item ID is Missing)" });
+  }
   req.user
     .getCart()
     .then((cart) => {
@@ -10,7 +16,14 @@ exports.deleteCartItem = (req, res, next) => {
     })
     .then((products) => {
       const product = products[0];
-      product.cartItems.destroy();
+      productDes = product.description;
+      return product.cartItems.destroy();
+    })
+    .then(() => {
+      res.status(200).send({
+        success: true,
+        message: `Item, ${productDes} (ID #${itemId}) Removed From The Cart`,
+      });
     })
     .catch((err) => {
       console.log(err);
@@ -18,23 +31,60 @@ exports.deleteCartItem = (req, res, next) => {
 };
 
 exports.postCart = (req, res, next) => {
-  const prodId = req.params.productId;
-  const product = Product.findByPk(prodId);
+  const prodId = +req.params.productId;
+  if (!prodId) {
+    return res
+      .status(400)
+      .send({ success: false, message: "Invalid URL (Product ID is Missing)" });
+  }
+  let fetchedCart;
   req.user
     .getCart()
+    .then((cart) => {
+      fetchedCart = cart;
+      return cart.getProducts();
+    })
+    .then((products) => {
+      for (let product of products) {
+        if (product.id === prodId) {
+          throw {
+            success: false,
+            message: `Item, ${product.description} (ID #${prodId}) Already in Cart`,
+          };
+        }
+      }
+      return fetchedCart;
+    })
     .then((cart) => {
       return cart.addProduct(prodId);
     })
     .then(() => {
-      res.send(product);
+      return Product.findByPk(prodId);
     })
-    .catch((err) => console.log(err));
+    .then((product) => {
+      res.status(200).send({
+        success: true,
+        message: `Item, ${product.description} (ID #${prodId}) Added to The Cart`,
+      });
+    })
+    .catch((err) => {
+      if (err.success === false) {
+        res.status(200).send(err);
+      } else {
+        console.log(err);
+      }
+    });
 };
 
 const PRODUCT_PER_PAGE = 2;
 
 exports.getCartItems = (req, res, next) => {
   const page = +req.query.page;
+  if (!page) {
+    return res
+      .status(400)
+      .send({ success: false, message: "Invalid URL (Page no. is Missing)" });
+  }
   let fetchedCart, productCount, totalPrice;
   req.user
     .getCart()
@@ -52,7 +102,7 @@ exports.getCartItems = (req, res, next) => {
     })
     .then((products) => {
       const hasNextPage = page * PRODUCT_PER_PAGE < productCount;
-      res.json({
+      res.send({
         hasNextPage: hasNextPage,
         cartItems: products,
         total: totalPrice,

@@ -1,24 +1,42 @@
 const ordersEle = document.getElementById("orders");
 
+// get orders on dom load
 window.addEventListener("DOMContentLoaded", getOrders);
 
+//get orders
 async function getOrders() {
   try {
-    const orders = await axios.get("http://localhost:3000/get-orders");
+    const { data } = await axios.get("http://localhost:3000/get-orders");
     ordersEle.innerHTML = "";
-    orders.data.forEach((order) => {
-      showOrder(order);
-    });
-  } catch (err) {
-    console.log(err);
+    if (data.length === 0) {
+      ordersEle.innerHTML = "<h1 style='font-size:3rem'>No Orders Yet</h1>";
+    } else {
+      data.forEach((order) => {
+        showOrder(order);
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// formating date local
+function formatDate(date) {
+  const daysPassed = Math.round((new Date() - date) / (1000 * 60 * 60 * 24));
+  if (daysPassed === 0) return "Today";
+  else if (daysPassed === 1) return "Yesterday";
+  else if (daysPassed <= 3) return `${daysPassed} days ago`;
+  else {
+    const options = {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    };
+    return new Intl.DateTimeFormat("en-IN", options).format(date);
   }
 }
 
 function showOrder(order) {
-  const total = order.products.reduce(
-    (prev, curr) => prev + curr.price * curr.orderItems.quantity,
-    0
-  );
   const productsRows = order.products
     .map(function (product) {
       return ` <div class="cart-row">
@@ -26,23 +44,24 @@ function showOrder(order) {
           <img class="cart-img" src="${product.image}" alt="" />
           <span>${product.description}</span>
         </span>
-        <span class="cart-price cart-column">${product.price}</span>
+        <span class="cart-price cart-column"><i class="fa fa-indian-rupee-sign">${product.price}</i></span>
         <span class="cart-quantity cart-column">${product.orderItems.quantity}</span>
       </div>`;
     })
     .join("");
+  const orderPlacedOn = formatDate(new Date(order.createdAt));
   const newOrder = `<div class="order">
     <div class="order-header">
       <div class="order-placed">
-        <span>Order placed</span>
-        <span>${order.createdAt}</span>
+        <span>ORDER PLACED</span>
+        <span>${orderPlacedOn}</span>
       </div>
       <div class="order-total">
-        <span>Total</span>
-        <span>${total}</span>
+        <span>TOTAL</span>
+        <span><i class="fa fa-indian-rupee-sign">${order.total}</i></span>
       </div>
       <div class="order-id">
-        <span>Order-ID</span>
+        <span>ORDER-ID</span>
         <span>#${order.id}</span>
       </div>
     </div>
@@ -56,5 +75,5 @@ function showOrder(order) {
     <div id="cart-items">${productsRows}</div>
   </div>`;
 
-  ordersEle.innerHTML += newOrder;
+  ordersEle.insertAdjacentHTML("afterbegin", newOrder);
 }

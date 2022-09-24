@@ -5,6 +5,11 @@ const PRODUCT_PER_PAGE = 4;
 
 exports.getProducts = (req, res, next) => {
   const page = +req.query.page;
+  if (!page) {
+   return res
+      .status(400)
+      .send({ success: false, message: "Invalid URL (Page no. is Missing)" });
+  }
   let productCount, totalCartItems;
   req.user
     .getCart()
@@ -24,7 +29,7 @@ exports.getProducts = (req, res, next) => {
     })
     .then((products) => {
       const hasNextPage = page * PRODUCT_PER_PAGE < productCount;
-      res.json({
+      res.send({
         hasNextPage: hasNextPage,
         products: products,
         totalCartItems: totalCartItems,
