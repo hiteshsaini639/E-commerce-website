@@ -25,12 +25,14 @@ function formatDate(date) {
   const daysPassed = Math.round((new Date() - date) / (1000 * 60 * 60 * 24));
   if (daysPassed === 0) return "Today";
   else if (daysPassed === 1) return "Yesterday";
-  else if (daysPassed <= 3) return `${daysPassed} days ago`;
+  // else if (daysPassed <= 3) return `${daysPassed} days ago`;
   else {
     const options = {
       day: "2-digit",
       month: "long",
       year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     };
     return new Intl.DateTimeFormat("en-IN", options).format(date);
   }

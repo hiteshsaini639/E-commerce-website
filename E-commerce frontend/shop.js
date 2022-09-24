@@ -17,6 +17,8 @@ const cartNext = document.getElementById("cart-next");
 const cartTotal = document.getElementById("total-value");
 const cartNumber = document.getElementById("cart-number");
 const orderBtn = document.getElementById("order-btn");
+const cartHeader = document.querySelector(".cart-header");
+const cartTotalEle = document.querySelector(".cart-total");
 
 let qtyObj;
 //////////////////////////////popup Image on dbclick and close////////////////////////
@@ -140,13 +142,24 @@ async function getCartData(page = 1) {
     const { data } = await axios.get(
       `http://localhost:3000/get-cartItems?page=${page}`
     );
-    cartItems.innerText = "";
-    cartNumber.innerText = data.totalCartItems;
-    cartTotal.innerText = data.total;
-    data.cartItems.forEach((cartItem) => {
-      showCart(cartItem);
-    });
-    showCartPageBtn(page, data.hasNextPage);
+    if (data.totalCartItems == 0) {
+      cartPagination.style.display = "none";
+      cartHeader.style.visibility = "hidden";
+      cartTotalEle.style.visibility = "hidden";
+      cartItems.innerHTML =
+        "<h1 style='font-size:2rem'>Yours Cart is Empty</h1><br><p>Looks like you haven't made your choice yet</p>";
+    } else {
+      cartPagination.style.display = "block";
+      cartHeader.style.visibility = "visible";
+      cartTotalEle.style.visibility = "visible";
+      cartItems.innerText = "";
+      cartNumber.innerText = data.totalCartItems;
+      cartTotal.innerText = data.total;
+      data.cartItems.forEach((cartItem) => {
+        showCart(cartItem);
+      });
+      showCartPageBtn(page, data.hasNextPage);
+    }
   } catch (errorObj) {
     createNotification(errorObj.response.data);
     console.log(errorObj);
@@ -160,12 +173,14 @@ function showCart(item) {
     <img class="cart-img" src="${item.image}" alt="" />
     <span>${item.description}</span>
   </span>
-  <span class="cart-price cart-column"><i class="fa fa-indian-rupee-sign">${item.price}</i></span>
+  <span class="cart-price cart-column"><i class="fa fa-indian-rupee-sign">${
+    item.price
+  }</i></span>
   <span class="cart-quantity cart-column">
-    <input id=${item.id} type="number" value="${
+    <input id="${item.id}" type="number" value="${
     !qtyObj[item.id] ? "" : qtyObj[item.id]
   }" />
-    <button id=${item.id}>REMOVE</button>
+    <button id="${item.id}" data-price="${item.price}">REMOVE</button>
   </span>
 </div>`;
   cartItems.innerHTML += newItem;
@@ -188,29 +203,37 @@ function showCartPageBtn(page, hasNextPage) {
   }
 }
 
-//////////////////////////////delete from cart///////////////////////////////////////
+//////////////////////////////remove from cart///////////////////////////////////////
 cartItems.addEventListener("click", (e) => {
   if (e.target.matches("button")) {
-    removeItemFromCart(e.target.id);
+    removeItemFromCart(e.target);
   }
 });
 
-async function removeItemFromCart(itemId) {
+async function removeItemFromCart(itemEle) {
   try {
     const response = await axios.delete(
-      `http://localhost:3000/remove-item/${itemId}`
+      `http://localhost:3000/remove-item/${itemEle.id}`
     );
     if (response.status == 200) {
       createNotification(response.data);
-      delete qtyObj[itemId];
+      removeItemFromCartOnFrontend(itemEle);
+      delete qtyObj[itemEle.id];
       localStorage.setItem("quantityObject", JSON.stringify(qtyObj));
     } else {
       throw new Error({ response: response });
     }
   } catch (errorObj) {
-    createNotification(errorObj.response.data);
     console.log(errorObj);
+    createNotification(errorObj.response.data);
   }
+}
+
+// remove item from cart on frontend
+function removeItemFromCartOnFrontend(itemEle) {
+  cartNumber.innerText -= 1;
+  cartTotal.innerText -= itemEle.dataset.price;
+  itemEle.parentElement.parentElement.remove();
 }
 
 //////////////////////////////adding product to cart///////////////////////////////////
@@ -229,8 +252,9 @@ async function addToDBcart(productId) {
     const response = await axios.post(
       `http://localhost:3000/add-to-cart/${productId}`
     );
-    if (response.status == 200) {
+    if (response.status == 201) {
       createNotification(response.data);
+      cartNumber.innerText = 1 + +cartNumber.innerText;
     } else {
       throw new Error({ response: response });
     }
@@ -251,6 +275,7 @@ async function placeOrder() {
     );
     if (response.status == 201) {
       createNotification(response.data);
+      clearCartOnFrontend();
       localStorage.setItem("quantityObject", JSON.stringify({}));
     } else {
       throw new Error({ response: response });
@@ -258,6 +283,13 @@ async function placeOrder() {
   } catch (errorObj) {
     createNotification(errorObj.response.data);
     console.log(errorObj);
+  }
+
+  //clear cart on frontend
+  function clearCartOnFrontend() {
+    cartItems.innerText = "";
+    cartNumber.innerText = 0;
+    cartTotal.innerText = 0;
   }
   // catch (error) {
   //   if (error.response) {

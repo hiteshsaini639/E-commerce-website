@@ -275,6 +275,7 @@ body {
 
 h1 {
   text-align: center;
+  opacity: 0.8;
 }
 
 #cart,
@@ -420,6 +421,7 @@ h1 {
 
 #cart {
   margin: 0px;
+  min-width: 500px;
   position: fixed;
   padding: 10px;
   top: 50px;
@@ -430,6 +432,12 @@ h1 {
   min-height: 50vh;
   transition: all 0.3s linear;
   border-radius: 10px;
+}
+
+#cart p {
+  text-align: center;
+  opacity: 0.6;
+  font-size: 1.2rem;
 }
 
 #cart.active-cart {

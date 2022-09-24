@@ -22,7 +22,7 @@ exports.removeCartItem = (req, res, next) => {
     .then(() => {
       res.status(200).send({
         success: true,
-        message: `Item, ${productDes} (ID #${itemId}) Removed From The Cart`,
+        message: `Item Removed From The Cart, ${productDes} (ID #${itemId})`,
       });
     })
     .catch((err) => {
@@ -49,7 +49,7 @@ exports.postCart = (req, res, next) => {
         if (product.id === prodId) {
           throw {
             success: false,
-            message: `Item, ${product.description} (ID #${prodId}) Already in Cart`,
+            message: `Item Already in Cart, ${product.description} (ID #${prodId}) `,
           };
         }
       }
@@ -62,7 +62,7 @@ exports.postCart = (req, res, next) => {
       return Product.findByPk(prodId);
     })
     .then((product) => {
-      res.status(200).send({
+      res.status(201).send({
         success: true,
         message: `Item, ${product.description} (ID #${prodId}) Added to The Cart`,
       });
@@ -102,7 +102,7 @@ exports.getCartItems = (req, res, next) => {
     })
     .then((products) => {
       const hasNextPage = page * PRODUCT_PER_PAGE < productCount;
-      res.send({
+      res.status(200).send({
         hasNextPage: hasNextPage,
         cartItems: products,
         total: totalPrice,

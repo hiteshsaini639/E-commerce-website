@@ -29,7 +29,7 @@ exports.getProducts = (req, res, next) => {
     })
     .then((products) => {
       const hasNextPage = page * PRODUCT_PER_PAGE < productCount;
-      res.send({
+      res.status(200).send({
         hasNextPage: hasNextPage,
         products: products,
         totalCartItems: totalCartItems,
