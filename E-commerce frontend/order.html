@@ -16,7 +16,7 @@
       referrerpolicy="no-referrer"
     ></script>
     <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="order.css" />
   </head>
   <body>
     <nav class="nav">
@@ -35,6 +35,41 @@
       </div>
     </nav>
     <div class="container">
+      <header>
+        <div class="header-row first">
+          <h1>Your Orders</h1>
+          <div class="search-input">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="search" type="text" placeholder="Search all orders" />
+          </div>
+        </div>
+        <div class="header-row second">
+          <div class="order-count">
+            <strong><span id="order-number">0</span>&nbsp;order&nbsp;</strong
+            >placed in
+            <select name="days" id="days">
+              <option value="30">last 30 days</option>
+              <option value="3">last 3 days</option>
+              <option value="2">last 2 days</option>
+              <option value="1">yesterday</option>
+            </select>
+          </div>
+          <div class="order-by">
+            <label for="sort">Sort By:</label>
+            <select name="sort-by" id="sort">
+              <option selected value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="totalAsc">Total: Low to High</option>
+              <option value="totalDesc">Total: High to Low</option>
+            </select>
+          </div>
+        </div>
+      </header>
+      <div id="no-order"></div>
+      <div id="no-result">
+        <h1>No results found. Please try another search.</h1>
+        <p>You can search by product title or order number.</p>
+      </div>
       <section id="orders">
         <!-- orders -->
       </section>

@@ -64,8 +64,10 @@ exports.postOrder = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
+  const sortBy = req.query.sortBy;
+  const orderType = req.query.in;
   req.user
-    .getOrders({ include: ["products"] })
+    .getOrders({ include: ["products"], order: [[sortBy, orderType]] })
     .then((orders) => {
       res.status(200).send(orders);
     })

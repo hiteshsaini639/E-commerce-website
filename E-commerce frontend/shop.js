@@ -221,7 +221,7 @@ async function removeItemFromCart(itemEle) {
       delete qtyObj[itemEle.id];
       localStorage.setItem("quantityObject", JSON.stringify(qtyObj));
     } else {
-      throw new Error({ response: response });
+      throw ({ response: response });
     }
   } catch (errorObj) {
     console.log(errorObj);
@@ -256,7 +256,7 @@ async function addToDBcart(productId) {
       createNotification(response.data);
       cartNumber.innerText = 1 + +cartNumber.innerText;
     } else {
-      throw new Error({ response: response });
+      throw { response: response };
     }
   } catch (errorObj) {
     createNotification(errorObj.response.data);
@@ -278,7 +278,7 @@ async function placeOrder() {
       clearCartOnFrontend();
       localStorage.setItem("quantityObject", JSON.stringify({}));
     } else {
-      throw new Error({ response: response });
+      throw ({ response: response });
     }
   } catch (errorObj) {
     createNotification(errorObj.response.data);
