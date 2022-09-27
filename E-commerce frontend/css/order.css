@@ -1,3 +1,4 @@
+/* search, sort by, and in x days  */
 header {
   padding: 0 40px;
 }
@@ -40,25 +41,73 @@ select:focus {
   font-size: 0.8rem;
 }
 
-.order-header {
+/* order placed, total and order id */
+.order-header-info {
   background-color: #d7d7d7;
   display: flex;
   justify-content: space-around;
-  border-radius: 20px 20px 0 0;
+  border-radius: 5px 5px 0 0;
   padding: 10px;
 }
 
-.order-header div {
+.order-header-info div {
   display: flex;
   flex-direction: column;
 }
 
 .order {
-  border-radius: 20px;
+  border-radius: 5px;
   border: 1px solid;
   margin: 40px;
 }
 
+.order-price i {
+  font-size: medium;
+}
+
+.order-column {
+  display: flex;
+  align-items: center;
+  margin-right: 2rem;
+  padding: 5px 0;
+  margin-top: 10px;
+}
+
+.order-row {
+  font-size: 18px;
+  display: flex;
+}
+
+/* .order-header {
+  font-size: 1.2rem;
+  font-weight: bold;
+} */
+
+.order-item {
+  width: 45%;
+  margin: 0 auto;
+}
+
+.order-price {
+  width: 20%;
+}
+
+.order-quantity {
+  width: 20%;
+}
+
+.order-img {
+  width: 80px;
+  border-radius: 5px;
+  margin-right: 20px;
+}
+
+#orders {
+  min-height: 100vh;
+  margin-top: 20px;
+}
+
+/* // no result and no orders msg  */
 #no-result {
   display: none;
   flex-direction: column;

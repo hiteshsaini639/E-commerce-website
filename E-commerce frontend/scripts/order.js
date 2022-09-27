@@ -6,7 +6,7 @@ const orderNumber = document.getElementById("order-number");
 const noResult = document.getElementById("no-result");
 const noOrder = document.getElementById("no-order");
 
-// sorting in order according to input
+////////////////////////// sorting in order according to input/////////////////////////////
 sortSelect.addEventListener("change", (e) => {
   noResult.style.display = "none";
   noOrder.innerText = "";
@@ -21,13 +21,13 @@ sortSelect.addEventListener("change", (e) => {
   }
 });
 
-//order in last x days
+/////////////////////////////////order in last x days//////////////////////////////////////
 daysSelect.addEventListener("change", (e) => {
   noResult.style.display = "none";
   const ordersArr = document.querySelectorAll(".order");
   let count = 0;
   ordersArr.forEach((order) => {
-    if (order.dataset.dayspassed <= e.target.value) {
+    if (order.dataset.dayspassed <= +e.target.value) {
       order.style.display = "block";
       count++;
     } else {
@@ -42,7 +42,7 @@ daysSelect.addEventListener("change", (e) => {
   }
 });
 
-//filter orders
+//////////////////////////////////////filter orders////////////////////////////////////////
 searchInput.addEventListener("keyup", (e) => {
   let count = 0;
   noOrder.innerText = "";
@@ -72,7 +72,7 @@ searchInput.addEventListener("keyup", (e) => {
   }
 });
 
-// get orders on dom load
+// /////////////////////////////////get orders on dom load//////////////////////////////
 window.addEventListener("DOMContentLoaded", getOrders("createdAt", "ASC"));
 
 //get orders
@@ -116,42 +116,42 @@ function formatDate(date, daysPassed) {
 function showOrder(order) {
   const date = new Date(order.createdAt);
   const daysPassed = Math.round((new Date() - date) / (1000 * 60 * 60 * 24));
+  const orderPlacedOn = formatDate(date, daysPassed);
   const productRows = order.products
     .map(function (product) {
-      return ` <div class="cart-row">
-        <span class="cart-item cart-column">
-          <img class="cart-img" src="${product.image}" alt="" />
+      return `<hr> <div class="order-row">
+        <span class="order-item order-column">
+          <img class="order-img" src="${product.image}" alt="" />
           <span class="productDesc">${product.description}</span>
         </span>
-        <span class="cart-price cart-column"><i class="fa fa-indian-rupee-sign">${product.price}</i></span>
-        <span class="cart-quantity cart-column">${product.orderItems.quantity}</span>
+        <span class="order-price order-column"><i class="fa fa-inr" aria-hidden="true"></i>${product.price}</span>
+        <span class="order-quantity order-column">${product.orderItems.quantity}</span>
       </div>`;
     })
     .join("");
-  const orderPlacedOn = formatDate(date, daysPassed);
   const newOrder = `<div data-dayspassed="${daysPassed}" id="${order.id}" class="order">
-    <div class="order-header">
+    <div class="order-header-info">
       <div class="order-placed">
         <span>ORDER PLACED</span>
-        <span>${orderPlacedOn}</span>
+        <span><strong>${orderPlacedOn}</strong></span>
       </div>
       <div class="order-total">
         <span>TOTAL</span>
-        <span><i class="fa fa-indian-rupee-sign">${order.total}</i></span>
+        <span><i class="fa fa-inr" aria-hidden="true"></i><strong>${order.total}</strong></span>
       </div>
       <div class="order-id">
         <span>ORDER-ID</span>
-        <span>#${order.id}</span>
+        <span><strong>#${order.id}</strong></span>
       </div>
     </div>
     <div class="order-items">
-      <div class="cart-row cart-header">
-        <span class="cart-item cart-column">ITEM</span>
-        <span class="cart-price cart-column">PRICE</span>
-        <span class="cart-quantity cart-column">QUANTITY</span>
+      <div class="order-row order-header">
+        <span class="order-item order-column">ITEM</span>
+        <span class="order-price order-column">PRICE</span>
+        <span class="order-quantity order-column">QUANTITY</span>
       </div>
     </div>
-    <div id="cart-items">${productRows}</div>
+    <div id="order-items">${productRows}</div>
   </div>`;
 
   ordersEle.insertAdjacentHTML("afterbegin", newOrder);
