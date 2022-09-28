@@ -8,8 +8,6 @@ const noOrder = document.getElementById("no-order");
 
 ////////////////////////// sorting in order according to input/////////////////////////////
 sortSelect.addEventListener("change", (e) => {
-  noResult.style.display = "none";
-  noOrder.innerText = "";
   if (e.target.value == "newest") {
     getOrders("createdAt", "ASC");
   } else if (e.target.value == "oldest") {
@@ -24,6 +22,7 @@ sortSelect.addEventListener("change", (e) => {
 /////////////////////////////////order in last x days//////////////////////////////////////
 daysSelect.addEventListener("change", (e) => {
   noResult.style.display = "none";
+  searchInput.value = "";
   const ordersArr = document.querySelectorAll(".order");
   let count = 0;
   ordersArr.forEach((order) => {
@@ -83,10 +82,13 @@ async function getOrders(sortBy, orderType) {
     );
     ordersEle.innerHTML = "";
     if (data.length === 0) {
-      ordersEle.innerHTML = "<h1>No Orders Yet</h1>";
+      noOrder.innerHTML = "<h1>No Orders Yet</h1>";
     } else {
       orderNumber.innerText = data.length;
       daysSelect.value = 30;
+      noResult.style.display = "none";
+      noOrder.innerText = "";
+      searchInput.value = "";
       data.forEach((order) => {
         showOrder(order);
       });

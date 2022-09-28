@@ -1,12 +1,12 @@
 const { JSON } = require("sequelize");
 const Product = require("../models/product");
 
-const PRODUCT_PER_PAGE = 4;
+const PRODUCT_PER_PAGE = 6;
 
 exports.getProducts = (req, res, next) => {
   const page = +req.query.page;
   if (!page) {
-   return res
+    return res
       .status(400)
       .send({ success: false, message: "Invalid URL (Page no. is Missing)" });
   }

@@ -1,4 +1,4 @@
-/* search, sort by, and in x days  */
+/*////////////search, sort by, and in x days  ///////////////*/
 header {
   padding: 0 40px;
 }
@@ -41,13 +41,13 @@ select:focus {
   font-size: 0.8rem;
 }
 
-/* order placed, total and order id */
+/*//////////////order placed, total and order id /////////////*/
 .order-header-info {
   background-color: #d7d7d7;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   border-radius: 5px 5px 0 0;
-  padding: 10px;
+  padding: 15px;
 }
 
 .order-header-info div {
@@ -55,10 +55,16 @@ select:focus {
   flex-direction: column;
 }
 
+/*/////////////////////orders, items/////////////////////*/
 .order {
   border-radius: 5px;
-  border: 1px solid;
+  border: 1px solid #aaa;
   margin: 40px;
+  background-color: #f8f8f8;
+}
+
+hr {
+  color: #bbb;
 }
 
 .order-price i {
@@ -78,10 +84,10 @@ select:focus {
   display: flex;
 }
 
-/* .order-header {
-  font-size: 1.2rem;
-  font-weight: bold;
-} */
+.order-header {
+  font-size: 1rem;
+  opacity: 0.5;
+}
 
 .order-item {
   width: 45%;
@@ -107,7 +113,7 @@ select:focus {
   margin-top: 20px;
 }
 
-/* // no result and no orders msg  */
+/*//////////////// no result and no orders msg //////////////*/
 #no-result {
   display: none;
   flex-direction: column;
@@ -125,4 +131,5 @@ select:focus {
 #no-order h1 {
   transform: translateY(20vh);
   opacity: 0.7;
+  text-align: center;
 }

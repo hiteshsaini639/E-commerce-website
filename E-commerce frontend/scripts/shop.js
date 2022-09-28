@@ -59,8 +59,7 @@ async function getDataOnLoad(page = 1) {
     data.products.forEach((product) => {
       showProducts(product);
     });
-    qtyObj = JSON.parse(localStorage.getItem("quantityObject"));
-    qtyObj = qtyObj == null ? {} : qtyObj;
+    fetchQuantity();
     showPageBtn(page, data.hasNextPage);
   } catch (errorObj) {
     createNotification(errorObj.response.data);
@@ -108,8 +107,7 @@ function showPageBtn(page, hasNextPage) {
 cartItems.addEventListener("click", (e) => {
   if (e.target.matches("input")) {
     e.target.addEventListener("input", (e) => {
-      qtyObj = JSON.parse(localStorage.getItem("quantityObject"));
-      qtyObj = qtyObj == null ? {} : qtyObj;
+      fetchQuantity();
       qtyObj[e.target.id] = e.target.value;
       localStorage.setItem("quantityObject", JSON.stringify(qtyObj));
     });
@@ -120,8 +118,7 @@ cartItems.addEventListener("click", (e) => {
 cartBtn.addEventListener("click", () => {
   cart.classList.toggle("active-cart");
   if (cart.classList.contains("active-cart")) {
-    qtyObj = JSON.parse(localStorage.getItem("quantityObject"));
-    qtyObj = qtyObj == null ? {} : qtyObj;
+    fetchQuantity();
     getCartData(1);
   }
 });
@@ -129,8 +126,7 @@ cartBtn.addEventListener("click", () => {
 //cart pagination
 cartPagination.addEventListener("click", (e) => {
   if (e.target.matches("button")) {
-    qtyObj = JSON.parse(localStorage.getItem("quantityObject"));
-    qtyObj = qtyObj == null ? {} : qtyObj;
+    fetchQuantity();
     const page = +e.target.innerText;
     getCartData(page);
   }
@@ -143,11 +139,7 @@ async function getCartData(page = 1) {
       `http://localhost:3000/get-cartItems?page=${page}`
     );
     if (data.totalCartItems == 0) {
-      cartPagination.style.display = "none";
-      cartHeader.style.visibility = "hidden";
-      cartTotalEle.style.visibility = "hidden";
-      cartItems.innerHTML =
-        "<h1 style='font-size:2rem'>Yours Cart is Empty</h1><br><p>Looks like you haven't made your choice yet</p>";
+      cartIsEmpty();
     } else {
       cartPagination.style.display = "block";
       cartHeader.style.visibility = "visible";
@@ -221,7 +213,7 @@ async function removeItemFromCart(itemEle) {
       delete qtyObj[itemEle.id];
       localStorage.setItem("quantityObject", JSON.stringify(qtyObj));
     } else {
-      throw ({ response: response });
+      throw { response: response };
     }
   } catch (errorObj) {
     console.log(errorObj);
@@ -234,13 +226,15 @@ function removeItemFromCartOnFrontend(itemEle) {
   cartNumber.innerText -= 1;
   cartTotal.innerText -= itemEle.dataset.price;
   itemEle.parentElement.parentElement.remove();
+  if (cartNumber.innerText == 0) {
+    cartIsEmpty();
+  }
 }
 
 //////////////////////////////adding product to cart///////////////////////////////////
 cardContainer.addEventListener("click", (e) => {
   if (e.target.matches("button")) {
-    qtyObj = JSON.parse(localStorage.getItem("quantityObject"));
-    qtyObj = qtyObj == null ? {} : qtyObj;
+    fetchQuantity();
     qtyObj[e.target.id] = 1;
     localStorage.setItem("quantityObject", JSON.stringify(qtyObj));
     addToDBcart(e.target.id);
@@ -275,21 +269,15 @@ async function placeOrder() {
     );
     if (response.status == 201) {
       createNotification(response.data);
-      clearCartOnFrontend();
+      cart.classList.remove("active-cart");
+      cartNumber.innerText = 0;
       localStorage.setItem("quantityObject", JSON.stringify({}));
     } else {
-      throw ({ response: response });
+      throw { response: response };
     }
   } catch (errorObj) {
     createNotification(errorObj.response.data);
     console.log(errorObj);
-  }
-
-  //clear cart on frontend
-  function clearCartOnFrontend() {
-    cartItems.innerText = "";
-    cartNumber.innerText = 0;
-    cartTotal.innerText = 0;
   }
   // catch (error) {
   //   if (error.response) {
@@ -303,15 +291,36 @@ async function placeOrder() {
   // }
 }
 
-//////////////////////////////notify user//////////////////////////////////////////////
+//////////////////////////////helpers//////////////////////////////////////////////
+//notify user
 function createNotification(notificationObj) {
   const div = document.createElement("div");
   div.classList.add("show");
-  div.innerText = notificationObj.message;
+  if (!notificationObj.success) {
+    div.classList.add("error");
+  }
+  div.innerText = `${!notificationObj.success ? "Error" : "Success"}: ${
+    notificationObj.message
+  }`;
   notification.appendChild(div);
   (() => {
     setTimeout(() => {
       div.remove();
     }, 3000);
   })();
+}
+
+//fetch quantity
+function fetchQuantity() {
+  qtyObj = JSON.parse(localStorage.getItem("quantityObject"));
+  qtyObj = qtyObj == null ? {} : qtyObj;
+}
+
+//cart Is Empty
+function cartIsEmpty() {
+  cartPagination.style.display = "none";
+  cartHeader.style.visibility = "hidden";
+  cartTotalEle.style.visibility = "hidden";
+  cartItems.innerHTML =
+    "<h1 style='font-size:2rem'>Yours Cart is Empty</h1><br><p>Looks like you haven't made your choice yet</p>";
 }
