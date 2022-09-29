@@ -52,7 +52,7 @@ pagination.addEventListener("click", (e) => {
 async function getDataOnLoad(page = 1) {
   try {
     const { data } = await axios.get(
-      `http://localhost:3000/get-products?page=${page}`
+      `http://44.204.51.9:3000/get-products?page=${page}`
     );
     cardContainer.innerHTML = "";
     cartNumber.innerText = data.totalCartItems;
@@ -136,7 +136,7 @@ cartPagination.addEventListener("click", (e) => {
 async function getCartData(page = 1) {
   try {
     const { data } = await axios.get(
-      `http://localhost:3000/get-cartItems?page=${page}`
+      `http://44.204.51.9:3000/get-cartItems?page=${page}`
     );
     if (data.totalCartItems == 0) {
       cartIsEmpty();
@@ -205,7 +205,7 @@ cartItems.addEventListener("click", (e) => {
 async function removeItemFromCart(itemEle) {
   try {
     const response = await axios.delete(
-      `http://localhost:3000/remove-item/${itemEle.id}`
+      `http://44.204.51.9:3000/remove-item/${itemEle.id}`
     );
     if (response.status == 200) {
       createNotification(response.data);
@@ -244,7 +244,7 @@ cardContainer.addEventListener("click", (e) => {
 async function addToDBcart(productId) {
   try {
     const response = await axios.post(
-      `http://localhost:3000/add-to-cart/${productId}`
+      `http://44.204.51.9:3000/add-to-cart/${productId}`
     );
     if (response.status == 201) {
       createNotification(response.data);
@@ -264,7 +264,7 @@ orderBtn.addEventListener("click", placeOrder);
 async function placeOrder() {
   try {
     const response = await axios.post(
-      "http://localhost:3000/place-order",
+      "http://44.204.51.9:3000/place-order",
       qtyObj
     );
     if (response.status == 201) {

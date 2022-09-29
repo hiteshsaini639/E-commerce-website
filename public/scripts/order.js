@@ -78,7 +78,7 @@ window.addEventListener("DOMContentLoaded", getOrders("createdAt", "ASC"));
 async function getOrders(sortBy, orderType) {
   try {
     const { data } = await axios.get(
-      `http://localhost:3000/get-orders?sortBy=${sortBy}&in=${orderType}`
+      `http://44.204.51.9:3000/get-orders?sortBy=${sortBy}&in=${orderType}`
     );
     ordersEle.innerHTML = "";
     if (data.length === 0) {
