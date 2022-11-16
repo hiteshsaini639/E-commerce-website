@@ -1,5 +1,3 @@
-const { JSON } = require("sequelize");
-
 exports.postOrder = (req, res, next) => {
   const qtyObj = req.body;
   if (!qtyObj || Object.keys(qtyObj).length === 0) {
@@ -27,47 +25,34 @@ exports.postOrder = (req, res, next) => {
       });
     }
   }
-  let cartProducts, fetchedCart, orderId;
-  req.user
-    .getCart()
-    .then((cart) => {
-      fetchedCart = cart;
-      return cart.getProducts();
-    })
-    .then((products) => {
-      cartProducts = products;
-      const totalPrice = products.reduce(
-        (prev, curr) => prev + curr.price * qtyObj[curr.id],
-        0
-      );
-      return req.user.createOrder({ total: totalPrice });
-    })
-    .then((order) => {
-      orderId = order.id;
-      return order.addProducts(
-        cartProducts.map((product) => {
-          product.orderItems = { quantity: qtyObj[product.id] };
-          return product;
-        })
-      );
-    })
-    .then(() => {
-      return fetchedCart.setProducts(null);
-    })
-    .then(() => {
-      res.status(201).send({
-        success: true,
-        message: `Order Sucessfully Placed With Order ID #${orderId}`,
-      });
-    })
-    .catch((err) => console.log(err));
+
+  req.user.getCartAll().then((products) => {
+    const totalPrice = products.reduce(
+      (prev, curr) => prev + +curr.price * +qtyObj[curr._id.toString()],
+      0
+    );
+    const newProducts = [...products];
+    newProducts.forEach((product) => {
+      product.quantity = +qtyObj[product._id.toString()];
+    });
+
+    return req.user
+      .addOrder(totalPrice, products)
+      .then((result) => {
+        res.status(201).send({
+          success: true,
+          message: `Order Sucessfully Placed With Order ID #${result.insertedId}`,
+        });
+      })
+      .catch((err) => console.log(err));
+  });
 };
 
 exports.getOrders = (req, res, next) => {
   const sortBy = req.query.sortBy;
   const orderType = req.query.in;
   req.user
-    .getOrders({ include: ["products"], order: [[sortBy, orderType]] })
+    .getOrders(sortBy, orderType)
     .then((orders) => {
       res.status(200).send(orders);
     })

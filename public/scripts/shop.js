@@ -52,7 +52,7 @@ pagination.addEventListener("click", (e) => {
 async function getDataOnLoad(page = 1) {
   try {
     const { data } = await axios.get(
-      `http://44.204.51.9:3000/get-products?page=${page}`
+      `http://localhost:3000/get-products?page=${page}`
     );
     cardContainer.innerHTML = "";
     cartNumber.innerText = data.totalCartItems;
@@ -80,7 +80,7 @@ function showProducts(product) {
   <div class="card-content">
     <h3 class="card-title">${product.description}</h3>
     <i class="fa fa-indian-rupee-sign">${product.price}</i>
-    <button id="${product.id}" type="submit">ADD TO CART</button>
+    <button id="${product._id}" type="submit">ADD TO CART</button>
   </div>
 </div>`;
   cardContainer.innerHTML += newProduct;
@@ -136,7 +136,7 @@ cartPagination.addEventListener("click", (e) => {
 async function getCartData(page = 1) {
   try {
     const { data } = await axios.get(
-      `http://44.204.51.9:3000/get-cartItems?page=${page}`
+      `http://localhost:3000/get-cartItems?page=${page}`
     );
     if (data.totalCartItems == 0) {
       cartIsEmpty();
@@ -153,8 +153,8 @@ async function getCartData(page = 1) {
       showCartPageBtn(page, data.hasNextPage);
     }
   } catch (errorObj) {
-    createNotification(errorObj.response.data);
     console.log(errorObj);
+    createNotification(errorObj.response.data);
   }
 }
 
@@ -169,10 +169,10 @@ function showCart(item) {
     item.price
   }</i></span>
   <span class="cart-quantity cart-column">
-    <input id="${item.id}" type="number" value="${
-    !qtyObj[item.id] ? "" : qtyObj[item.id]
+    <input id="${item._id}" type="number" value="${
+    !qtyObj[item._id] ? "" : qtyObj[item._id]
   }" />
-    <button id="${item.id}" data-price="${item.price}">REMOVE</button>
+    <button id="${item._id}" data-price="${item.price}">REMOVE</button>
   </span>
 </div>`;
   cartItems.innerHTML += newItem;
@@ -205,7 +205,7 @@ cartItems.addEventListener("click", (e) => {
 async function removeItemFromCart(itemEle) {
   try {
     const response = await axios.delete(
-      `http://44.204.51.9:3000/remove-item/${itemEle.id}`
+      `http://localhost:3000/remove-item/${itemEle.id}`
     );
     if (response.status == 200) {
       createNotification(response.data);
@@ -244,7 +244,7 @@ cardContainer.addEventListener("click", (e) => {
 async function addToDBcart(productId) {
   try {
     const response = await axios.post(
-      `http://44.204.51.9:3000/add-to-cart/${productId}`
+      `http://localhost:3000/add-to-cart/${productId}`
     );
     if (response.status == 201) {
       createNotification(response.data);
@@ -264,7 +264,7 @@ orderBtn.addEventListener("click", placeOrder);
 async function placeOrder() {
   try {
     const response = await axios.post(
-      "http://44.204.51.9:3000/place-order",
+      "http://localhost:3000/place-order",
       qtyObj
     );
     if (response.status == 201) {

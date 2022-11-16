@@ -78,8 +78,9 @@ window.addEventListener("DOMContentLoaded", getOrders("createdAt", "ASC"));
 async function getOrders(sortBy, orderType) {
   try {
     const { data } = await axios.get(
-      `http://44.204.51.9:3000/get-orders?sortBy=${sortBy}&in=${orderType}`
+      `http://localhost:3000/get-orders?sortBy=${sortBy}&in=${orderType}`
     );
+    console.log(data);
     ordersEle.innerHTML = "";
     if (data.length === 0) {
       noOrder.innerHTML = "<h1>No Orders Yet</h1>";
@@ -119,7 +120,7 @@ function showOrder(order) {
   const date = new Date(order.createdAt);
   const daysPassed = Math.round((new Date() - date) / (1000 * 60 * 60 * 24));
   const orderPlacedOn = formatDate(date, daysPassed);
-  const productRows = order.products
+  const productRows = order.items
     .map(function (product) {
       return `<hr> <div class="order-row">
         <span class="order-item order-column">
@@ -127,11 +128,11 @@ function showOrder(order) {
           <span class="productDesc">${product.description}</span>
         </span>
         <span class="order-price order-column"><i class="fa fa-inr" aria-hidden="true"></i>${product.price}</span>
-        <span class="order-quantity order-column">${product.orderItems.quantity}</span>
+        <span class="order-quantity order-column">${product.quantity}</span>
       </div>`;
     })
     .join("");
-  const newOrder = `<div data-dayspassed="${daysPassed}" id="${order.id}" class="order">
+  const newOrder = `<div data-dayspassed="${daysPassed}" id="${order._id}" class="order">
     <div class="order-header-info">
       <div class="order-placed">
         <span>ORDER PLACED</span>
@@ -143,7 +144,7 @@ function showOrder(order) {
       </div>
       <div class="order-id">
         <span>ORDER-ID</span>
-        <span><strong>#${order.id}</strong></span>
+        <span><strong>#${order._id}</strong></span>
       </div>
     </div>
     <div class="order-items">
